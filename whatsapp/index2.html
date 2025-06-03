@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WhatsApp Broadcast</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="main-container">
+      <div class="main-header">
+        <h1 class="main-title">Create a Broadcast</h1>
+        <p class="main-subtitle">
+          Create personalized broadcast templates for your campaigns
+        </p>
+        <button class="create-template-btn" onclick="openModal()">
+          Create New Broadcast
+        </button>
+      </div>
+
+      <div class="templates-section">
+        <div class="templates-header">
+          <h3 class="templates-title">Templates</h3>
+        </div>
+
+        <div id="templatesContainer">
+          <!-- Templates will be loaded here -->
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2 class="modal-title">Create Broadcast</h2>
+          <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
+
+        <div class="modal-content">
+          <div class="editor-panel">
+            <div class="form-group">
+              <label class="form-label">Template Name</label>
+              <input
+                type="text"
+                class="form-input"
+                id="templateName"
+                placeholder="Enter template name"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Upload Image</label>
+              <div
+                class="upload-area"
+                onclick="document.getElementById('imageUpload').click()"
+                ondrop="handleDrop(event)"
+                ondragover="handleDragOver(event)"
+                ondragleave="handleDragLeave(event)"
+              >
+                <div class="upload-icon">📷</div>
+                <div class="upload-text">Click to upload or drag and drop</div>
+                <input
+                  type="file"
+                  id="imageUpload"
+                  class="file-input"
+                  accept="image/*"
+                  onchange="handleImageUpload(event)"
+                />
+                <img
+                  id="uploadedImage"
+                  class="image-preview"
+                  style="display: none"
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Template Content</label>
+              <textarea
+                class="form-input form-textarea"
+                id="templateContent"
+                placeholder="Enter your template content here. Use variables like {{firstName}}, {{lastName}}, {{company}} for personalization."
+              ></textarea>
+              <div class="variables-helper">
+                <strong>Available Variables:</strong> {{firstName}},
+                {{lastName}}, {{email}}, {{company}}, {{position}}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Target Audience</label>
+              <div class="tabs">
+                <button class="tab active" onclick="switchTab('groups')">
+                  User Groups
+                </button>
+                <button class="tab" onclick="switchTab('csv')">
+                  Upload CSV
+                </button>
+              </div>
+
+              <div class="tab-content active" id="groupsTab">
+                <div class="group-selector">
+                  <div
+                    class="group-chip"
+                    onclick="toggleGroup(this, 'marketing')"
+                  >
+                    Marketing Team
+                  </div>
+                  <div class="group-chip" onclick="toggleGroup(this, 'sales')">
+                    Sales Team
+                  </div>
+                  <div
+                    class="group-chip"
+                    onclick="toggleGroup(this, 'support')"
+                  >
+                    Support Team
+                  </div>
+                  <div
+                    class="group-chip"
+                    onclick="toggleGroup(this, 'management')"
+                  >
+                    Management
+                  </div>
+                  <div class="group-chip" onclick="toggleGroup(this, 'all')">
+                    All Users
+                  </div>
+                </div>
+              </div>
+
+              <div class="tab-content" id="csvTab">
+                <input
+                  type="file"
+                  class="form-input"
+                  accept=".csv"
+                  onchange="handleCSVUpload(event)"
+                />
+                <div class="csv-info">
+                  <strong>CSV Format:</strong> firstName, lastName, email,
+                  company, position
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="preview-panel">
+            <div class="preview-container">
+              <h3 class="preview-title">Live Preview</h3>
+              <div class="template-preview" id="templatePreview">
+                <p>Your template preview will appear here as you type...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <div class="left-buttons">
+            <button class="btn btn-secondary" onclick="closeModal()">
+              Cancel
+            </button>
+          </div>
+          <div class="right-buttons">
+            <button class="btn btn-primary" onclick="saveTemplate()">
+              Save Template
+            </button>
+            <button class="btn btn-test" onclick="testTemplate()">
+              Test Template
+            </button>
+            <button class="btn btn-broadcast" onclick="sendBroadcast()">
+              Send Broadcast
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

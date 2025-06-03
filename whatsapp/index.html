@@ -3,175 +3,351 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Template Maker</title>
+    <title>WhatsApp Broadcast</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="style.css" />
+
   </head>
   <body>
-    <div class="main-container">
-      <div class="main-header">
-        <h1 class="main-title">Template Maker</h1>
-        <p class="main-subtitle">
-          Create personalized templates for your campaigns
-        </p>
-        <button class="create-template-btn" onclick="openModal()">
-          Create New Template
-        </button>
+    <div class="container">
+      <div class="header">
+        <h1>📱 Broadcasts</h1>
+        <p>Create and manage your WhatsApp broadcast message templates</p>
       </div>
 
-      <div class="templates-section">
-        <div class="templates-header">
-          <h3 class="templates-title">Your Templates</h3>
-        </div>
+      <div class="main-content">
+        <button class="create-btn" onclick="openModal()">
+          ✨ Create Broadcast
+        </button>
 
-        <div id="templatesContainer">
-          <!-- Templates will be loaded here -->
+        <div class="templates-section">
+          <div class="templates-header">
+            <h2>Available Templates</h2>
+          </div>
+
+          <div class="empty-state">
+            <div style="font-size: 4rem; margin-bottom: 20px">📝</div>
+            <h3>No templates yet</h3>
+            <p>Create your first broadcast template to get started</p>
+          </div>
         </div>
       </div>
     </div>
 
+    <!-- Modal -->
     <div class="modal-overlay" id="modalOverlay">
       <div class="modal">
         <div class="modal-header">
-          <h2 class="modal-title">Template Builder</h2>
           <button class="close-btn" onclick="closeModal()">&times;</button>
+          <div class="modal-title">Create Broadcast Template</div>
+          <div class="modal-actions">
+            <button class="btn btn-test">📋 Test</button>
+            <button class="btn btn-send">🚀 Send Broadcast</button>
+            
+          </div>
         </div>
 
         <div class="modal-content">
-          <div class="editor-panel">
+          <!-- Live Preview Section -->
+          <div class="preview-section">
+            <div class="preview-title">📱 Live Preview</div>
+            <div class="whatsapp-message">
+              <div class="message-image" id="previewImage">
+                📷 Upload an image
+              </div>
+              <div class="message-title" id="previewTitle">Your Title Here</div>
+              <div class="message-body" id="previewBody">Your message will appear here...
+              </div>
+              <button class="message-cta" id="previewCTA">
+                Call to Action
+              </button>
+            </div>
+          </div>
+
+          <!-- Form Section -->
+          <div class="form-section">
+            <div class="form-title">📝 Message Content</div>
+
+            <div class="form-group">
+              <label class="form-label">Upload Image</label>
+              <input
+                type="file"
+                id="imageInput"
+                class="file-input"
+                accept="image/*"
+                onchange="handleImageUpload(event)"
+              />
+              <label for="imageInput" class="file-label">📁 Choose Image</label>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Title</label>
+              <input
+                type="text"
+                class="form-input"
+                id="titleInput"
+                placeholder="Enter message title"
+                oninput="updatePreview()"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Message</label>
+              <textarea
+                class="form-input form-textarea"
+                id="messageInput"
+                placeholder="Enter your message here..."
+                oninput="updatePreview()"
+              ></textarea>
+            </div>
+
+            <button class="config-btn" onclick="configureVariables()">
+              🔧 Configure Variables
+            </button>
+
+            <button class="config-btn" onclick="configureCTA()">
+              🎯 Configure Call to Action
+            </button>
+          </div>
+
+          <!-- Settings Section -->
+          <div class="settings-section">
+            <div class="form-title">⚙️ Broadcast Settings</div>
+
             <div class="form-group">
               <label class="form-label">Template Name</label>
               <input
                 type="text"
                 class="form-input"
-                id="templateName"
                 placeholder="Enter template name"
               />
             </div>
 
             <div class="form-group">
-              <label class="form-label">Upload Image</label>
-              <div
-                class="upload-area"
-                onclick="document.getElementById('imageUpload').click()"
-                ondrop="handleDrop(event)"
-                ondragover="handleDragOver(event)"
-                ondragleave="handleDragLeave(event)"
-              >
-                <div class="upload-icon">📷</div>
-                <div class="upload-text">Click to upload or drag and drop</div>
-                <input
-                  type="file"
-                  id="imageUpload"
-                  class="file-input"
-                  accept="image/*"
-                  onchange="handleImageUpload(event)"
-                />
-                <img
-                  id="uploadedImage"
-                  class="image-preview"
-                  style="display: none"
-                />
+              <div class="toggle-container">
+                <label class="form-label">Schedule Broadcast</label>
+                <div
+                  class="toggle"
+                  id="scheduleToggle"
+                  onclick="toggleSchedule()"
+                >
+                  <div class="toggle-slider"></div>
+                </div>
               </div>
-            </div>
 
-            <div class="form-group">
-              <label class="form-label">Template Content</label>
-              <textarea
-                class="form-input form-textarea"
-                id="templateContent"
-                placeholder="Enter your template content here. Use variables like {{firstName}}, {{lastName}}, {{company}} for personalization."
-              ></textarea>
-              <div class="variables-helper">
-                <strong>Available Variables:</strong> {{firstName}},
-                {{lastName}}, {{email}}, {{company}}, {{position}}
+              <div class="schedule-buttons" id="scheduleButtons">
+                <button class="schedule-btn" onclick="selectDate()">
+                  📅 Select Date
+                </button>
+                <button class="schedule-btn" onclick="selectTime()">
+                  🕐 Select Time
+                </button>
               </div>
             </div>
 
             <div class="form-group">
               <label class="form-label">Target Audience</label>
-              <div class="tabs">
-                <button class="tab active" onclick="switchTab('groups')">
-                  User Groups
-                </button>
-                <button class="tab" onclick="switchTab('csv')">
-                  Upload CSV
-                </button>
-              </div>
-
-              <div class="tab-content active" id="groupsTab">
-                <div class="group-selector">
-                  <div
-                    class="group-chip"
-                    onclick="toggleGroup(this, 'marketing')"
-                  >
-                    Marketing Team
-                  </div>
-                  <div class="group-chip" onclick="toggleGroup(this, 'sales')">
-                    Sales Team
-                  </div>
-                  <div
-                    class="group-chip"
-                    onclick="toggleGroup(this, 'support')"
-                  >
-                    Support Team
-                  </div>
-                  <div
-                    class="group-chip"
-                    onclick="toggleGroup(this, 'management')"
-                  >
-                    Management
-                  </div>
-                  <div class="group-chip" onclick="toggleGroup(this, 'all')">
-                    All Users
-                  </div>
+              <div class="audience-options">
+                <div
+                  class="audience-pill"
+                  data-audience="Marketing"
+                  onclick="toggleAudience('Marketing')"
+                >
+                  Marketing
+                </div>
+                <div
+                  class="audience-pill"
+                  data-audience="Sales"
+                  onclick="toggleAudience('Sales')"
+                >
+                  Sales
+                </div>
+                <div
+                  class="audience-pill"
+                  data-audience="VIP Customers"
+                  onclick="toggleAudience('VIP Customers')"
+                >
+                  VIP Customers
+                </div>
+                <div
+                  class="audience-pill"
+                  data-audience="New Subscribers"
+                  onclick="toggleAudience('New Subscribers')"
+                >
+                  New Subscribers
+                </div>
+                <div
+                  class="audience-pill"
+                  data-audience="All Customers"
+                  onclick="toggleAudience('All Customers')"
+                >
+                  All Customers
                 </div>
               </div>
 
-              <div class="tab-content" id="csvTab">
+              <div style="margin: 10px 0">
                 <input
                   type="file"
-                  class="form-input"
+                  id="csvInput"
+                  class="file-input"
                   accept=".csv"
                   onchange="handleCSVUpload(event)"
                 />
-                <div class="csv-info">
-                  <strong>CSV Format:</strong> firstName, lastName, email,
-                  company, position
-                </div>
+                <label for="csvInput" class="file-label">📊 Upload CSV</label>
               </div>
             </div>
-          </div>
-
-          <div class="preview-panel">
-            <div class="preview-container">
-              <h3 class="preview-title">Live Preview</h3>
-              <div class="template-preview" id="templatePreview">
-                <p>Your template preview will appear here as you type...</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="action-buttons">
-          <div class="left-buttons">
-            <button class="btn btn-secondary" onclick="closeModal()">
-              Cancel
-            </button>
-          </div>
-          <div class="right-buttons">
-            <button class="btn btn-primary" onclick="saveTemplate()">
-              Save Template
-            </button>
-            <button class="btn btn-test" onclick="testTemplate()">
-              Test Template
-            </button>
-            <button class="btn btn-broadcast" onclick="sendBroadcast()">
-              Send Broadcast
-            </button>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Variable Configuration Dialog -->
+    <div class="dialog-overlay" id="variableDialog">
+      <div class="dialog">
+        <div class="dialog-title">🔧 Configure Variables</div>
+        <div class="dialog-content">
+          <p>Click on a variable to insert it into your message:</p>
+          <div class="variable-list">
+            <div class="variable-tag" onclick="insertVariable('{{firstName}}')">
+              {{firstName}}
+            </div>
+            <div class="variable-tag" onclick="insertVariable('{{lastName}}')">
+              {{lastName}}
+            </div>
+            <div class="variable-tag" onclick="insertVariable('{{email}}')">
+              {{email}}
+            </div>
+            <div class="variable-tag" onclick="insertVariable('{{phone}}')">
+              {{phone}}
+            </div>
+            <div class="variable-tag" onclick="insertVariable('{{company}}')">
+              {{company}}
+            </div>
+            <div
+              class="variable-tag"
+              onclick="insertVariable('{{customField1}}')"
+            >
+              {{customField1}}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Add Custom Variable:</label>
+            <input
+              type="text"
+              class="form-input"
+              id="customVariableInput"
+              placeholder="Enter variable name"
+            />
+            <button
+              class="config-btn"
+              onclick="addCustomVariable()"
+              style="margin-top: 8px"
+            >
+              Add Variable
+            </button>
+          </div>
+        </div>
+        <div class="dialog-actions">
+          <button
+            class="dialog-btn secondary"
+            onclick="closeDialog('variableDialog')"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA Configuration Dialog -->
+    <div class="dialog-overlay" id="ctaDialog">
+      <div class="dialog">
+        <div class="dialog-title">🎯 Configure Call to Action</div>
+        <div class="dialog-content">
+          <div class="form-group">
+            <label class="form-label">Button Text:</label>
+            <input
+              type="text"
+              class="form-input"
+              id="ctaTextInput"
+              placeholder="Enter button text"
+              value="Call to Action"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Action Type:</label>
+            <select class="form-input" id="ctaTypeSelect">
+              <option value="url">Open URL</option>
+              <option value="phone">Call Phone Number</option>
+              <option value="message">Send Message</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Action Value:</label>
+            <input
+              type="text"
+              class="form-input"
+              id="ctaValueInput"
+              placeholder="Enter URL, phone number, or message"
+            />
+          </div>
+        </div>
+        <div class="dialog-actions">
+          <button
+            class="dialog-btn secondary"
+            onclick="closeDialog('ctaDialog')"
+          >
+            Cancel
+          </button>
+          <button class="dialog-btn" onclick="saveCTA()">Save CTA</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Date Picker Dialog -->
+    <div class="dialog-overlay" id="dateDialog">
+      <div class="dialog">
+        <div class="dialog-title">📅 Select Date</div>
+        <div class="dialog-content">
+          <div class="form-group">
+            <label class="form-label">Choose Date:</label>
+            <input type="date" class="form-input" id="dateInput" />
+          </div>
+        </div>
+        <div class="dialog-actions">
+          <button
+            class="dialog-btn secondary"
+            onclick="closeDialog('dateDialog')"
+          >
+            Cancel
+          </button>
+          <button class="dialog-btn" onclick="saveDate()">Save Date</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Time Picker Dialog -->
+    <div class="dialog-overlay" id="timeDialog">
+      <div class="dialog">
+        <div class="dialog-title">🕐 Select Time</div>
+        <div class="dialog-content">
+          <div class="form-group">
+            <label class="form-label">Choose Time:</label>
+            <input type="time" class="form-input" id="timeInput" />
+          </div>
+        </div>
+        <div class="dialog-actions">
+          <button
+            class="dialog-btn secondary"
+            onclick="closeDialog('timeDialog')"
+          >
+            Cancel
+          </button>
+          <button class="dialog-btn" onclick="saveTime()">Save Time</button>
+        </div>
+      </div>
+    </div>
+
     <script src="app.js"></script>
   </body>
 </html>
